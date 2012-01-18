@@ -1,0 +1,102 @@
+#!/usr/bin/env sh
+# $Id$
+#
+# This script allows you to generate a drupal site with git repositories
+# 
+# Usage: 
+# 
+# 3sign_build [target directory] [-nms]
+# 
+# -n name
+#   Enter the name of the site if it's different from the base dir of the target directory
+# 
+#
+
+# Get the absolute path of this executable
+ORIGDIR=$(pwd)
+SELF_PATH=$(cd -P -- "$(dirname -- "$0")" && pwd -P) && SELF_PATH=$SELF_PATH/$(basename -- "$0")
+SITE_TARGET_DIR=""
+SITE_NAME=""
+
+# handle the options
+while getopts ":n:" opt; do
+  case $opt in
+    n)
+      SITE_NAME=$OPTARG
+      shift $((OPTIND-1)); OPTIND=1
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+# make sure the user provided a target directory
+if [[ -z "${1}" ]] ; then
+  echo "Error: You need to provide a target directory" >&2
+  exit 1  
+fi
+
+# set the target directory
+SITE_TARGET_DIR=$1
+
+# check if the user provided a site name
+if [[ -z "${SITE_NAME}" ]] ; then
+  SITE_NAME=$(basename -- "$SITE_TARGET_DIR")
+fi
+
+
+# check if the target directory exists
+if [[ -d "${SITE_TARGET_DIR}" ]] ; then
+  echo "Error: The target directory already exists" >&2
+  exit 1
+fi
+
+
+# make remote repos
+ssh git@git.3sign.com "cd git; mkdir $SITE_NAME; cd $SITE_NAME; for i in core.git contrib.git $SITE_NAME.git; do mkdir \$i; cd \$i; git --bare init; cd ..; done;"
+
+
+# fetch and execute the drush make file
+git clone git@github.com:3sign/threesign-standard-makefile.git
+drush make --working-copy threesign-standard-makefile/threesign.make $SITE_TARGET_DIR
+
+# remove the drush make file
+rm -r threesign-standard-makefile
+
+cd $SITE_TARGET_DIR
+
+# set up the core repo
+git remote rename origin drupal
+git remote add origin git@git.3sign.com:git/$SITE_NAME/core.git
+git checkout -b master
+
+# set up the contrib repo
+cd sites/all
+git init
+git remote add origin git@git.3sign.com:git/$SITE_NAME/contrib.git
+git add .
+git commit -am "initial commit"
+git push origin master
+cd ..
+git add all/
+git commit -am "added contrib repository"
+
+# set up the site repo
+mkdir $SITE_NAME
+cd $SITE_NAME
+mkdir themes modules files
+git init
+git remote add origin git@git.3sign.com:git/$SITE_NAME/$SITE_NAME.git
+touch README
+git add .
+git commit -am "initial commit"
+git push origin master
+cd ..
+git add $SITE_NAME/
+git commit -am "added $SITE_NAME repository"
