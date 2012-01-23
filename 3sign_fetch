@@ -1,0 +1,62 @@
+#!/usr/bin/env sh
+# $Id$
+#
+# This script allows you to generate a drupal site with git repositories
+# 
+# Usage: 
+# 
+# 3sign_fetch [target directory] [-nms]
+# 
+# -n name
+#   Enter the name of the site if it's different from the base dir of the target directory
+# 
+#
+
+# Get the absolute path of this executable
+ORIGDIR=$(pwd)
+SELF_PATH=$(cd -P -- "$(dirname -- "$0")" && pwd -P) && SELF_PATH=$SELF_PATH/$(basename -- "$0")
+SITE_TARGET_DIR=""
+SITE_NAME=""
+
+# handle the options
+while getopts ":n:" opt; do
+  case $opt in
+    n)
+      SITE_NAME=$OPTARG
+      shift $((OPTIND-1)); OPTIND=1
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+# make sure the user provided a target directory
+if [[ -z "${1}" ]] ; then
+  echo "Error: You need to provide a target directory" >&2
+  exit 1  
+fi
+
+# set the target directory
+SITE_TARGET_DIR=$1
+
+# check if the user provided a site name
+if [[ -z "${SITE_NAME}" ]] ; then
+  SITE_NAME=$(basename -- "$SITE_TARGET_DIR")
+fi
+
+
+# check if the target directory exists
+if [[ -d "${SITE_TARGET_DIR}" ]] ; then
+  echo "Error: The target directory already exists" >&2
+  exit 1
+fi
+
+
+# fetch the code from the git server
+git clone --recursive git@git.3sign.com:git/$SITE_NAME/core.git $SITE_TARGET_DIR
