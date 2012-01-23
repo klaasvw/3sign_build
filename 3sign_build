@@ -67,7 +67,7 @@ git clone git@github.com:3sign/threesign-standard-makefile.git
 drush make --working-copy threesign-standard-makefile/threesign.make $SITE_TARGET_DIR
 
 # remove the drush make file
-rm -r threesign-standard-makefile
+rm -rf threesign-standard-makefile
 
 cd $SITE_TARGET_DIR
 
@@ -100,3 +100,6 @@ git push origin master
 cd ..
 git add $SITE_NAME/
 git commit -am "added $SITE_NAME repository"
+
+# final push!
+git push origin master
