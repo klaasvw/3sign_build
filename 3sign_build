@@ -80,7 +80,7 @@ git checkout -b master
 mv sites/default sites/$SITE_NAME
 mkdir sites/$SITE_NAME/themes sites/$SITE_NAME/modules
 cd sites
-ln -s default $SITE_NAME
+ln -s $SITE_NAME default
 cd ..
 
 # initial push
