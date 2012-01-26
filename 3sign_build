@@ -59,47 +59,40 @@ fi
 
 
 # make remote repos
-ssh git@git.3sign.com "cd git; mkdir $SITE_NAME; cd $SITE_NAME; for i in core.git contrib.git $SITE_NAME.git; do mkdir \$i; cd \$i; git --bare init; cd ..; done;"
+ssh git@git.3sign.com "cd git; mkdir $SITE_NAME $SITE_NAME/$SITE_NAME.git; cd $SITE_NAME/$SITE_NAME.git; git --bare init;"
 
 
 # fetch and execute the drush make file
 git clone git@github.com:3sign/threesign-standard-makefile.git
 drush make --working-copy threesign-standard-makefile/threesign.make $SITE_TARGET_DIR
 
-# remove the drush make file
+remove the drush make file
 rm -rf threesign-standard-makefile
 
 cd $SITE_TARGET_DIR
 
 # set up the core repo
 git remote rename origin drupal
-git remote add origin git@git.3sign.com:git/$SITE_NAME/core.git
+git remote add origin git@git.3sign.com:git/$SITE_NAME/$SITE_NAME.git
 git checkout -b master
 
-# set up the contrib repo
-cd sites/all
-git init
-git remote add origin git@git.3sign.com:git/$SITE_NAME/contrib.git
+# set up site directory
+mv sites/default sites/$SITE_NAME
+mkdir sites/$SITE_NAME/themes sites/$SITE_NAME/modules
+cd sites
+ln -s default $SITE_NAME
+cd ..
+
+# initial push
 git add .
 git commit -am "initial commit"
 git push origin master
-cd ..
-git add all/
-git commit -am "added contrib repository"
 
-# set up the site repo
-mkdir $SITE_NAME
-cd $SITE_NAME
-mkdir themes modules files
-git init
-git remote add origin git@git.3sign.com:git/$SITE_NAME/$SITE_NAME.git
-touch README
-git add .
-git commit -am "initial commit"
-git push origin master
-cd ..
-git add $SITE_NAME/
-git commit -am "added $SITE_NAME repository"
 
-# final push!
-git push origin master
+# fetch new stuff:
+# rm -rf custom_module
+# git clone remote custom_module
+# git add custom_module/ # WITH /
+# cd custom_module
+# # do your magic
+# git commit / push / ...
