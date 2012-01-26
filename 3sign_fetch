@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # $Id$
 #
-# This script allows you to generate a drupal site with git repositories
+# This script allows you to download a drupal site from the 3sign git server
 # 
 # Usage: 
 # 
@@ -59,4 +59,4 @@ fi
 
 
 # fetch the code from the git server
-git clone --recursive git@git.3sign.com:git/$SITE_NAME/core.git $SITE_TARGET_DIR
+git clone --recursive git@git.3sign.com:git/$SITE_NAME/$SITE_NAME.git $SITE_TARGET_DIR
