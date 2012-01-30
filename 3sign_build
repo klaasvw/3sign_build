@@ -71,6 +71,9 @@ rm -rf threesign-standard-makefile
 
 cd $SITE_TARGET_DIR
 
+# remove .git directories except root
+rm -rf `find ./* -name .git`
+
 # set up the core repo
 git remote rename origin drupal
 git remote add origin git@git.3sign.com:git/$SITE_NAME/$SITE_NAME.git
