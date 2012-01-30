@@ -66,7 +66,7 @@ ssh git@git.3sign.com "cd git; mkdir $SITE_NAME $SITE_NAME/$SITE_NAME.git; cd $S
 git clone git@github.com:3sign/threesign-standard-makefile.git
 drush make --translations=nl --working-copy threesign-standard-makefile/threesign.make $SITE_TARGET_DIR
 
-remove the drush make file
+# remove the drush make file
 rm -rf threesign-standard-makefile
 
 cd $SITE_TARGET_DIR
