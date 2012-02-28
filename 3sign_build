@@ -80,11 +80,11 @@ git remote add origin git@git.3sign.com:git/$SITE_NAME/$SITE_NAME.git
 git checkout -b master
 
 # set up site directory
-mv sites/default sites/$SITE_NAME
-mkdir sites/$SITE_NAME/themes sites/$SITE_NAME/modules
-cd sites
-ln -s $SITE_NAME default
-cd ..
+#mv sites/default sites/$SITE_NAME
+#mkdir sites/$SITE_NAME/themes sites/$SITE_NAME/modules
+#cd sites
+#ln -s $SITE_NAME default
+#cd ..
 
 # initial push
 git add .
