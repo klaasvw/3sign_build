@@ -86,6 +86,9 @@ git checkout -b master
 #ln -s $SITE_NAME default
 #cd ..
 
+#add patches dir in sites/all
+mkdir sites/all/patches
+
 # initial push
 git add .
 git commit -am "initial commit"
