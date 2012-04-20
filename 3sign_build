@@ -75,9 +75,10 @@ cd $SITE_TARGET_DIR
 rm -rf `find ./* -name .git`
 
 # set up the core repo
-git remote rename origin drupal
+git init
+#git remote rename origin drupal
 git remote add origin git@git.3sign.com:git/$SITE_NAME/$SITE_NAME.git
-git checkout -b master
+#git checkout -b master
 
 # set up site directory
 #mv sites/default sites/$SITE_NAME
